@@ -233,10 +233,16 @@ Estilos para cartas
   filter: grayscale(1) opacity(0.5);
 }
 
+.cardHover {
+  border: 2px solid var(--globalColor);
+  box-shadow: var(--boxshadow0);
+  }
+  
+/*
 .card:hover {
   border: 2px solid var(--globalColor);
   box-shadow: var(--boxshadow0);
-}
+}*/
 
 .card.inative {
   box-shadow: var(--boxshadow0);

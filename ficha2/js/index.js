@@ -11,6 +11,15 @@ let cardsLogos =['angular','bootstrap','html','javascript','vue','svelte','react
 
 
 
+cards.forEach(card =>{
+    card.addEventListener('mouseover' ,()=>{
+        card.classList.add("cardHover")
+    })
+    card.addEventListener('mouseout',()=>{  
+        card.classList.remove("cardHover")
+    })
+})
+
 function reset(){
 
 panelGame.style.display ='none';
