@@ -10,7 +10,14 @@ const cards= document.querySelectorAll(".card");
 let cardsLogos =['angular','bootstrap','html','javascript','vue','svelte','react','css','backbone','ember'];
 let flippedCards;
 let totalFlippedCards;
-let totalPoints;
+let totalPoints=0;
+const TIMEOUTGAME = 20 ;
+const labelPoints= document.querySelector('#points');
+let timer;
+let timerID;
+const labelGameTime = document.getElementById('gameTime');
+
+
 
 cards.forEach(card =>{
     card.addEventListener('mouseover' ,()=>{
@@ -27,6 +34,7 @@ panelGame.style.display ='none';
 
 message.textContent="";
 message.classList.remove('hide');
+labelGameTime.removeAttribute('style');
 
 gameStarted.forEach((esconder)=>esconder.classList.add('hide'))
 
@@ -42,7 +50,7 @@ else {
 btLevel.addEventListener('change', () =>{
     reset();
 });
-
+createPanelGame();
 
 }
 
@@ -60,7 +68,8 @@ function startGame() {
     shuffleArray(cardsLogos);
     let [indice, newCardLogos] = [0, cardsLogos.slice(0, cards.length / 2)];
     newCardLogos = [...newCardLogos, ...newCardLogos];
-
+    timer = TIMEOUTGAME;
+    timerID = setInterval(updateGameTime, 1000);
 
     cards.forEach(card => {
         const randomNumber = Math.floor(Math.random() * newCardLogos.length) + 1;
@@ -73,54 +82,22 @@ function startGame() {
     });
     
 }
-/*
-function startGame(){
-    
 
-    flippedCards=[];
-    btPlay.textContent="Terminar Jogo";
-    btLevel.disable=true;
-    gameStarted.forEach((mostrar)=>mostrar.classList.remove('hide'));
-    message.classList.add("hide");
-    cards.forEach((card) =>{
-        const randomNumber = Math.floor(Math.random() * cards.length) + 1;
-        card.style.order = `${randomNumber}`;
-      
-    })
-   
-    //showCards(cards);
-    //console.table(cardsLogos);f
-    shuffleArray(cardsLogos);
-    console.table(cardsLogos);
-   
-    let numero= 0;
-    let flag = cards.length / 2;
-    for (let j of cards) {
-        
-        if(flag == numero){
-            numero = 0;
-        }
-        const randomNumber = Math.floor(Math.random() * cards.length) + 1;
-        let img = j.querySelector('.card-front')
-        let logotipo = j.dataset.logo;
-        j.style =`Order: ${randomNumber}`;
-        console.log(randomNumber);
-        logotipo = `${cardsLogos[numero]}`;
-        console.log(logotipo);
-        img.src = `images/${cardsLogos[numero]}.png`
-        console.log(img);
-        numero++;
-        j.addEventListener('click',flipCard);
-        
-       
-    }
-     
-   
-}*/
 
 function stopGame(){
     btPlay.textContent="Iniciar Jogo";
     btLevel.disable="false";
+    modalGameOver.style.display = 'block';
+    cards.forEach(card =>{
+        card.classList.remove("inative");
+
+        card.classList.remove("flipped");
+
+        card.classList.remove("grayscale");
+    })
+
+    totalPoints=0;
+    clearInterval(timerId);
     reset();
 }
 btPlay.addEventListener('click', () => {
@@ -193,16 +170,59 @@ function checkPair() {
 
 function updatePoints(operacaoSoma = true) {
 
-    // if (operacaoSoma) totalPoints += (timer * (cards.length / 2));
+    if(operacaoSoma){
+        if(btLevel.value==1){
+            totalPoints +=(timer*3);
+        }else if(btLevel.value==2){
+            totalPoints += (timer * 4);
+        }  else if (btLevel.value==3){
+            totalPoints += (timer * 5);
+        }
+        
+    }else totalPoints<5 ?totalPoints =0 : totalPoints-=5
+            console.log(totalPoints);
 
-    if (operacaoSoma) totalPoints += (cards.length - totalFlippedCards + 2) * 2;
+        labelPoints.textContent= totalPoints;
 
-    else totalPoints < 2 ? totalPoints = 0 : totalPoints -= 2;
 
-    points.textContent = totalPoints;
 
 }
 
-function gameOver(){return totalFlippedCards == cards.length;}
+function gameOver(){ if(totalFlippedCards == cards.length){
+                        
+                        return true;
+
+                    } else return false;
+
+}
+
+function updateGameTime(){
+
+timer--;
+labelGameTime.textContent = `${timer}`;
+
+if (timer <= 10){
+    labelGameTime.style.background= 'Red';
+}
+if (timer == 0){
+    stopGame();
+}
+
+}
+
+
+function createPanelGame(){
+
+panelGame.innerHTML='';
+panelGame.className='';
+
+
+let div = document.createElement('div');
+div.setAttribute('class', 'card');
+ let imgBack = document.createElement('img');
+ imgBack.setAttribute('src', 'images/ls.png');
+div.appendChild(imgBack);
+ panelGame.appendChild(div);
+}
 
 //btPlay.addEventListener('click',(start)=>{btPlay.textContent="Terminar Jogo",gameStarted.forEach((mostrar)=>mostrar.classList.remove("hide"))});
